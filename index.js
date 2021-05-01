@@ -3,9 +3,13 @@ const Slack = require('node-slack');
 
 class SlackLogger {
   static logger = null;
+  static env = "default";
+  static isSendSlack = true;
 
-  static init(hookUrl) {
+  static init(hookUrl, env = "default", isSendSlack = true) {
     SlackLogger.logger = new Slack(hookUrl);
+    SlackLogger.env = env;
+    SlackLogger.isSendSlack = isSendSlack;
   }
 
   static getCaller(msg) {
@@ -38,7 +42,7 @@ class SlackLogger {
       try{
         msg = JSON.stringify(msg);
       } catch (e) {
-        console.log(`[ERROR]\n[at handleMsg (/slack-logger/index.js:40)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${JSON.stringify(e.message)}`);
+        console.log(`(${SlackLogger.env})[ERROR]\n[at handleMsg (/slack-logger/index.js:40)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${JSON.stringify(e.message)}`);
       }
     }
     return msg;
@@ -57,7 +61,7 @@ class SlackLogger {
   }
 
   static log(args, type) {
-    if (!SlackLogger.logger) return console.log(`[ERROR]\n[at log (/slack-logger/index.js:59)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: Slack logger called before initialization`);
+    if (!SlackLogger.logger) return console.log(`(${SlackLogger.env})[ERROR]\n[at log (/slack-logger/index.js:59)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: Slack logger called before initialization`);
     try{
       // Handle type of incoming msg
       let msg = '';
@@ -70,16 +74,17 @@ class SlackLogger {
       let sourceLine = SlackLogger.getCaller();
 
       // Format logging
-      let text = `[${type}]\n[${sourceLine}]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${msg}`;
+      let text = `(${SlackLogger.env})[${type}]\n[${sourceLine}]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${msg}`;
 
       // Console log to local output
       console.log(text);
+      if (!SlackLogger.isSendSlack) return;
 
       // Send to Slack
       SlackLogger.logger.send({text});
 
     } catch (e) {
-      console.log(`[ERROR]\n[at log (/slack-logger/index.js:81)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${JSON.stringify(e.message)}`);
+      console.log(`(${SlackLogger.env})[ERROR]\n[at log (/slack-logger/index.js:81)]\n${moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss.SSS')}: ${JSON.stringify(e.message)}`);
     }
   }
 }

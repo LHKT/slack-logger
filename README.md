@@ -1,20 +1,33 @@
 
+
 # slack-logger
 A simple logger that replace console.log and send the log to Slack channel with Webhook
 
 ## Usage
-```
-// Import the logger	
-const SlackLogger = require('@lhkt/slack-logger');
+```  
+// Import the logger const SlackLogger = require('@lhkt/slack-logger');  
+  
+// Initialise the logger with your webhook URL  
+SlackLogger.init("Your_Webhook_URL");   
+// Use as an ordinary logger  
+SlackLogger.logi("Info Testing Log");  
+SlackLogger.logd("Debug Testing Log");  
+SlackLogger.loge("Error Testing Log"); 
 
-// Initialise the logger with your webhook URL
-SlackLogger.init("Your_Webhook_URL"); 
+// Example output: 
+(local)[INFO]
+[at \xxx\xxx\index.js:xx:xx]
+2021-05-01 12:34:56.789: Info Testing Log
+```  
 
-// Use as an ordinary logger
-SlackLogger.logi("Info Testing Log");
-SlackLogger.logd("Debug Testing Log");
-SlackLogger.loge("Error Testing Log");
-```
+### SlackLogger.init(hookUrl, env = "default", isSendSlack = true)
+
+| Parameter | Type | Compulsory? | Default | Description |
+|--|--|--|--|--|
+| hookUrl | string | Y |  | Slack Webhook URL |
+| env  | string | N | "default" | Environment tag at the beginning of every log |
+| isSendSlack | boolean| N | true | Determine if logs should send to Slack. If false, the logger will only run console.log() locally. |
+
 
 ## Get Your Webhook URL
 

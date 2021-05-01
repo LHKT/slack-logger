@@ -1,6 +1,6 @@
 {
   "name": "@lhkt/slack-logger",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A simple logger that replace console.log and send the log to Slack channel with Webhook",
   "main": "index.js",
   "scripts": {
